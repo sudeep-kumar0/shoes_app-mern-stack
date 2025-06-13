@@ -1,18 +1,22 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
 import connectDB from "./utilities/db.js";
 import Shoes from "./utilities/models/shoes.js";
 import authRoutes from "./routes/authRoutes.js";
 
-const app = express(); // ✅ Initialize app first
-const PORT = 5000;
+// Load .env variables
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 5000; // ✅ Use dynamic port for Render
 
 // Middleware
 app.use(express.json());
 app.use(cors());
 
-// Authentication Routes
-app.use("/auth", authRoutes); // ✅ Move this AFTER initializing `app`
+// Routes
+app.use("/auth", authRoutes);
 
 // Get all shoes
 app.get("/getshoes", async (_, res) => {
@@ -75,12 +79,12 @@ app.delete("/deleteAllShoes", async (req, res) => {
   }
 });
 
-// Connect to MongoDB and start the server
+// Connect to MongoDB and start server
 connectDB()
   .then(() => {
     console.log("Connected to MongoDB");
     app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
+      console.log(`Server is running on port ${PORT}`);
     });
   })
   .catch((error) => {

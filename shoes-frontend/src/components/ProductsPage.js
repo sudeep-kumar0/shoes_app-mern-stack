@@ -157,14 +157,14 @@ const ProductsPage = () => {
       try {
         setIsLoading(true);
 
-        const res = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/getshoes`
-        );
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
+        const response = await fetch("https://shoes-app-mern-stack-1.onrender.com/getshoes");
+
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        const data = await res.json();
+        const data = await response.json();
         setProducts(data);
       } catch (err) {
         console.error("Error fetching shoes:", err);

@@ -5,7 +5,6 @@ const ProductsPage = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // CSS styles defined directly in component
   const styles = {
     container: {
       maxWidth: "1200px",
@@ -157,15 +156,19 @@ const ProductsPage = () => {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch("http://localhost:5000/getshoes");
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+
+        const res = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/getshoes`
+        );
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
         }
-        const data = await response.json();
+
+        const data = await res.json();
         setProducts(data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        setError("Failed to load products. Please try again later.");
+      } catch (err) {
+        console.error("Error fetching shoes:", err);
+        setError("Failed to load shoes. Please try again later.");
       } finally {
         setIsLoading(false);
       }
@@ -174,7 +177,6 @@ const ProductsPage = () => {
     fetchProducts();
   }, []);
 
-  // Function to handle card hover
   const handleMouseEnter = (e) => {
     Object.assign(e.currentTarget.style, styles.cardHover);
   };
@@ -191,18 +193,14 @@ const ProductsPage = () => {
           <h1 style={styles.title}>Premium Footwear Collection</h1>
           <p style={styles.subtitle}>
             Discover exceptional comfort and style with our handpicked selection
-            of designer shoes
+            of designer shoes.
           </p>
         </header>
 
-        {isLoading && (
-          <div style={styles.loading}>Loading your perfect pair...</div>
-        )}
-
-        {error && !isLoading && <div style={styles.error}>{error}</div>}
-
+        {isLoading && <div style={styles.loading}>Loading...</div>}
+        {error && <div style={styles.error}>{error}</div>}
         {!isLoading && !error && products.length === 0 && (
-          <div style={styles.empty}>No products available at the moment.</div>
+          <div style={styles.empty}>No products available.</div>
         )}
 
         {!isLoading && !error && products.length > 0 && (
@@ -216,27 +214,20 @@ const ProductsPage = () => {
               >
                 <div style={styles.imageContainer}>
                   <img
-                    src={product.image || "/api/placeholder/400/300"}
-                    alt={product.name || "Shoe product"}
+                    src={product.image}
+                    alt={product.name}
                     style={styles.image}
                   />
                   <div style={styles.tag}>New</div>
                 </div>
                 <div style={styles.content}>
-                  <h2 style={styles.name}>
-                    {product.name || "Stylish Footwear"}
-                  </h2>
-                  <p style={styles.description}>
-                    {product.description ||
-                      "No description available for this product."}
-                  </p>
+                  <h2 style={styles.name}>{product.name}</h2>
+                  <p style={styles.description}>{product.description}</p>
                   <div style={styles.priceRow}>
-                    <span style={styles.price}>
-                      ${product.price || "99.99"}
-                    </span>
+                    <span style={styles.price}>${product.price}</span>
                   </div>
                   <div style={styles.sizeContainer}>
-                    {(product.size?.split(",") || ["N/A"]).map((size, i) => (
+                    {(product.size?.split(",") || []).map((size, i) => (
                       <span key={i} style={styles.sizeTag}>
                         {size.trim()}
                       </span>
